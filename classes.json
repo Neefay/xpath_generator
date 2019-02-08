@@ -1,4 +1,5 @@
 {
+	"NOTES_IGNORE_THIS": "These properties are only to demonstrate what can be done with the script. Feel free to modify as needed!",
 	"values": {
 		"BASE_VALUE_1": 100,
 		"BASE_VALUE_2": 200,
