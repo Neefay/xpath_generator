@@ -1,0 +1,77 @@
+{
+	"values": {
+		"BASE_VALUE_1": 100,
+		"BASE_VALUE_2": 200,
+		"BASE_VALUE_1_2": ["*BASE_VALUE_1", ["add", "*BASE_VALUE_2"]],
+
+		"RANGE_VALUE": [10, 100],
+		"RANGE_VALUE_TWO_DECIMAL_POINTS": [10, 100, 2],
+
+		"VALUE_ORDER_2": ["*VALUE_ORDER_1", ["multiply", 1.5]],
+		"VALUE_ORDER_1": 100,
+
+		"STEEL_COST_BASE": 30,
+		"STEEL_COST_LOW": ["*STEEL_COST_BASE", ["divide", 2]],
+		"STEEL_COST_HIGH": ["*STEEL_COST_BASE", ["multiply", 2]],
+
+		"SPEED_1": 4000,
+		"SPEED_2": 8000,
+
+		"FAST_SPEED_RANDOM_CHOICE": [["*SPEED_1", "*SPEED_2"], ["multiply", 1.5, 2, 2]],
+
+		"BASE_ACCURACY": 60,
+		"HIGH_ACCURACY": [["*BASE_ACCURACY"], ["multiply", 1.1, 1.5]],
+		"LOW_ACCURACY": [["*BASE_ACCURACY"], ["multiply", 0.7, 1]],
+
+		"BASE_WARMUP_TIME": 60,
+		"HIGH_WARMUP_TIME": ["*BASE_WARMUP_TIME", ["multiply", 1, 2]],
+
+		"762x39": "RNBullet_762x39_Rifle",
+		"556x45": "RNBullet_556x45_Rifle"
+	},
+	"classes": {
+
+		"Class_AssaultRifle": {
+			"description": "Generic Assault Rifle class",
+		    "properties": [
+		        { "property": "AccuracyShort", "operation": ["multiply", 1.1, "*LOW_ACCURACY"], "tree": ["statBases"] },
+		        { "property": "AccuracyTouch", "operation": ["multiply", 1.3, "*LOW_ACCURACY"], "tree": ["statBases"] },
+		        { "property": "AccuracyMedium", "operation": ["multiply", 1.3, "*HIGH_ACCURACY"], "tree": ["statBases"] },
+		        { "property": "AccuracyLong", "operation": ["multiply", 1.3, "*HIGH_ACCURACY"], "tree": ["statBases"] }
+	        ]
+		},
+
+		"Class_FasterToMake": {
+			"properties": [{ "property": "WorkToMake", "value": "*SPEED_1", "tree": ["statBases"] }]
+		},
+
+		"Class_CheaperWeapon": {
+			"Parents": ["Class_FasterToMake"],
+		    "properties": [{ "property": "Steel", "value": "*STEEL_COST_LOW", "tree": ["costList"] }]
+		},
+
+		"Class_ChaperAndFaster": { "Parents": ["Class_CheaperWeapon", "Class_FasterToMake"]	},
+
+		"Class_Basic_AK": {
+			"Parents": ["Class_AssaultRifle", "Class_ChaperAndFaster"],
+			"label": "AK Rifle",
+			"description": "A kalashnikov automatic rifle.",
+			"properties": [
+				{ "property": "defaultProjectile", "value": "*762x39", "tree": ["verbs", "li"] }
+			]
+		},
+
+		"Class_Basic_AR": {
+			"Parents": ["Class_AssaultRifle", "Class_ChaperAndFaster"],
+			"label": "AR Rifle",
+			"description": "An armalite automatic rifle.",
+			"properties": [
+				{ "property": "defaultProjectile", "value": "*556x45", "tree": ["verbs", "li"] }
+			]
+		},
+
+		"Class_M4sOnly": {
+			"include": ["RNGun_M4A1Black", "RNGun_M4A1MilSpec", "RNGun_M4A1MilSpecSD", "RNGun_M4A1Benghazi", "RNGun_M4A1Black", "RNGun_M4A1Hunter", "RNGun_M4A1Ghost", "RNGun_M4A1Fallujah", "RNGun_M4A1Warfighter", "RNGun_M4A1SD_Commando", "RNGun_M4A1SD_VLTOR", "RNGun_M4A1SD_Banshee", "RNGun_M4A1AR", "RNGun_M4A1RamadiSD"]
+		}
+	}
+}

@@ -1,0 +1,65 @@
+{
+	"target_folder": "C:/Your/Rimworld/ModsDirectoryHere/Mods",
+	"output_folder": "C:/This/IsWhere/YourFilesWillBe/Outputted",
+	"main": [
+		{
+			"folder": "RimmuNation",
+			"label": "RimmuNation Example (OPTIONAL)",
+			"desc": "This Example patch will perform several tasks for the AKs. (OPTIONAL)",
+			"defs": [
+				{
+					"folder": "ThingDefs_Misc",
+					"defType": "ThingDef",
+					"files": [
+						{
+						    "defName": "RangedIndustrial_R_AK_Style",
+						    "Classes": ["Class_Basic_AK"],
+						    "properties": []
+						},
+						{
+						    "defName": "RangedIndustrial_R_AR_Style",
+						    "Classes": ["Class_Basic_AR"],
+						    "label": "M4 Guns (OPTIONAL)",
+						    "description": "Patch for all M4 armalites. (OPTIONAL)",
+						    "properties": [
+						    	{
+						    		"exclude": ["RNGun_M4A1SD_Commando"],
+						    		"property": "warmupTime",
+						    		"value": "*HIGH_WARMUP_TIME",
+						    		"tree": ["verbs", "li"]
+						    	}
+						    ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"folder": "Core",
+			"label": "Vanilla",
+			"desc": "Reworks some vanilla values",
+			"defs": [
+				{
+					"folder": "BiomeDefs",
+					"defType": "BiomeDef",
+					"files": [
+						{
+						    "defName": "Biomes_Cold",
+						    "label": "Cold Biomes",
+						    "desc": "Patches relating to Cold Biomes.",
+						    "properties": [
+						    	{
+						    		"desc": "Blasts the chance of snow for some cold biomes",
+						    		"include": ["BorealForest", "Tundra", "IceSheet"],
+						    		"property": "SnowHard",
+						    		"operation": ["multiply", 100],
+						    		"tree": ["baseWeatherCommonalities"]
+						    	}
+					    	]
+						}
+					]
+				}
+			]
+		}
+	]
+}

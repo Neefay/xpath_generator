@@ -1,0 +1,38 @@
+{
+	"target_folder": "C:/Games/RimWorld.v1.0.2150/Mods",
+	"output_folder": "C:/Games/RimWorld.v1.0.2150/Mods/BromAFixes/Patches",
+	"main": [
+		{
+			"folder": "RimmuNation",
+			"label": "RimmuNation Example (OPTIONAL)",
+			"desc": "This Example patch will perform several tasks for the AKs. (OPTIONAL)",
+			"defs": [
+				{
+					"folder": "ThingDefs_Misc",
+					"defType": "ThingDef",
+					"files": [
+						{
+						    "defName": "RangedIndustrial_R_AK_Style",
+						    "Classes": ["Class_Basic_AK"],
+						    "properties": []
+						},
+						{
+						    "defName": "RangedIndustrial_R_AR_Style",
+						    "Classes": ["Class_M4sOnly"],
+						    "label": "M4 Guns (OPTIONAL)",
+						    "description": "Patch for all M4 armalites. (OPTIONAL)",
+						    "properties": [
+						    	{
+						    		"exclude": ["RNGun_M4A1SD_Commando"],
+						    		"property": "warmupTime",
+						    		"value": "*HIGH_WARMUP_TIME",
+						    		"tree": ["verbs", "li"]
+						    	}
+						    ]
+						}
+					]
+				}
+			]
+		}
+	]
+}

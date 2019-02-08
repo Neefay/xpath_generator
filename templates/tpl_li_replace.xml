@@ -1,0 +1,6 @@
+<li Class="PatchOperationReplace">
+	<xpath>$defPath/$defType[defName = "$defName"]/$propPath/$mainProp</xpath>
+	<value>
+		<$mainProp>$finalValue</$mainProp>
+	</value>
+</li>
