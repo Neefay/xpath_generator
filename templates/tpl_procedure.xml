@@ -1,0 +1,6 @@
+<li Class="PatchOperation$defProcedure">
+	<xpath>$defPath/$defType[defName = "$defName"]/$propPath</xpath>
+	<value>
+		$valuesList
+	</value>
+</li>

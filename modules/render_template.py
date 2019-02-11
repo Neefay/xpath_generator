@@ -9,7 +9,7 @@ def render_template(t, s, d):
 
 	try:
 		if (t == "main"):
-			return s.substitute(defPath=d["defPath"], defType=d["defType"], defName=d["defName"], propPath=d["propPath"], mainProp=d["mainProp"], finalValue=d["finalValue"]);
+			return s.substitute(valuesList=d["valuesList"], defProcedure=d["defProcedure"], defPath=d["defPath"], defType=d["defType"], defName=d["defName"], propPath=d["propPath"], mainProp=d["mainProp"], finalValue=d["finalValue"]);
 		if (t == "header"):
 			return s.substitute(label=d["label"])
 		if (t == "header_long"):

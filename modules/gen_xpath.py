@@ -1,3 +1,6 @@
+def get_proc_line(prop, v):
+	return f"<{prop}>{v}</{prop}>"
+
 def main(config):
 
 	### MODULE IMPORTS
@@ -116,6 +119,7 @@ def main(config):
 			for def_file in def_files:
 				try:
 					def_file_defName = def_file["defName"]
+					def_defFilename = def_file["filename"] if ("filename" in def_file) else None
 					def_file_properties = def_file["properties"]
 				except Exception as e:
 					return log_error((f"Property: {str(e)} missing from file config."))
@@ -193,6 +197,7 @@ def main(config):
 						try:
 							def_prop_tree = def_prop["tree"]
 							def_prop_property = def_prop["property"]
+							def_prop_procedure = def_prop["procedure"] if ("procedure" in def_prop) else "Replace"
 						except Exception as e:
 							return log_error((f"Property: {str(e)} missing from property config."))
 						try:
@@ -206,37 +211,53 @@ def main(config):
 							if obj_forbidden(def_prop, obj_defName):
 								continue
 
-							for final_prop in target_prop.iter(def_prop_property):
-								fpt = final_prop.text
+							ftp = 0
+							final_prop_path = ""
 
-								### PERFORM ARITHMETIC OPERATION OR ASSIGN VALUE
+							if (def_prop_procedure == "Replace"):
 
-								try:
-									if ("operation" in def_prop):
-										normalized_values = get_stored_value(def_prop["operation"], stored_values)
+								final_prop_path = (f"{prop_path}/{def_prop_property}")
 
-										fpt = float(fpt) if '.' in fpt else int(fpt)
-										fpt = do_operation(fpt, normalized_values)
-										fpt = round(fpt, normalized_values[3] if (len(normalized_values) == 4) else 2)
-									elif ("value" in def_prop):
-										fpt = get_stored_value(def_prop["value"], stored_values)[0]
-									else:
-										raise
-								except Exception as e:
-									return log_error(f"Property '{obj_defName}' has no valid value or operation: {e}.")
+								for final_prop in target_prop.iter(def_prop_property):
+									fpt = final_prop.text
 
-								### APPEND NEW DICTIONARY INTO LIST
+									### PERFORM ARITHMETIC OPERATION OR ASSIGN VALUE
 
-								this_export = {
-									"defType": obj_defType,
-									"defPath": def_path,
-									"defName": obj_defName,
-									"propPath": prop_path,
-									"mainProp": def_prop_property,
-									"finalValue": fpt,
-									"taskDesc": def_prop["desc"] if ("desc" in def_prop) else None
-								}
-								exported_properties[obj_defName]["values"].append(this_export)
+									try:
+										if ("operation" in def_prop):
+											normalized_values = get_stored_value(def_prop["operation"], stored_values)
+
+											fpt = float(fpt) if '.' in fpt else int(fpt)
+											fpt = do_operation(fpt, normalized_values)
+											fpt = round(fpt, normalized_values[3] if (len(normalized_values) == 4) else 2)
+										elif ("value" in def_prop):
+											fpt = get_stored_value(def_prop["value"], stored_values)[0]
+										else:
+											raise
+									except Exception as e:
+										return log_error(f"Property '{obj_defName}' has no valid value or operation: {e}.")
+
+							if (def_prop_procedure == "Add"):
+
+								final_prop_path = (f"{prop_path}")
+
+								for proc_key, proc_attr in def_prop_property.items():
+									def_prop_property[proc_key] = get_stored_value(proc_attr, stored_values)[0]
+
+							### APPEND NEW DICTIONARY INTO LIST
+
+							this_export = {
+								"defType": obj_defType,
+								"defPath": def_path,
+								"defName": obj_defName,
+								"propPath": final_prop_path,
+								"mainProp": def_prop_property,
+								"finalValue": fpt,
+								"defProcedure": def_prop_procedure,
+								"finalFilename": def_defFilename,
+								"taskDesc": def_prop["desc"] if ("desc" in def_prop) else None
+							}
+							exported_properties[obj_defName]["values"].append(this_export)
 				log_ok("Properties processed.", 3)
 
 				### APPEND DEF LIST INTO MOD PROPERTIES
@@ -253,8 +274,14 @@ def main(config):
 
 				### CREATE OUTPUT FILE AND READ MAIN TEMPLATE
 
+				output_filename = attr
+
+				for def_key in def_files:
+					if (("filename" in def_key) and (def_key["defName"] == attr)):
+						output_filename = def_key["filename"]
+
 				try:
-					output_file = create_file(os.path.join(OUTPUT_DIR, folder_name, def_folder), (attr + ".xml"))
+					output_file = create_file(os.path.join(OUTPUT_DIR, folder_name, def_folder), (output_filename + ".xml"))
 					tpl_template = read_template(HOME_DIR, "main")
 
 					sub_def_file = {}
@@ -326,8 +353,21 @@ def main(config):
 
 										### WRITE REPLACEMENT XPATH OPERATION
 
+										valuesList = ""
+										mainProp = exp_values["mainProp"]
+										finalValue = exp_values["finalValue"]
+
+										if (exp_values["defProcedure"] == "Replace"):
+											valuesList = (valuesList + get_proc_line(mainProp, finalValue))
+
+										if (exp_values["defProcedure"] == "Add"):
+											for exp_key, exp_attr in mainProp.items():
+												valuesList = (valuesList + get_proc_line(exp_key, exp_attr))
+
+										exp_values["valuesList"] = valuesList
+
 										try:
-											for line in read_template(HOME_DIR, "li_replace"):
+											for line in read_template(HOME_DIR, "procedure"):
 												output_file.write(write_line(render_template("main", Template(line), exp_values), TAB_SPACE, 0))
 										except Exception as e:
 											return log_error(e)
